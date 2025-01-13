@@ -1,28 +1,28 @@
 {
-  "name": "netlify-plugin-inline-functions-env",
-  "version": "1.0.9",
-  "description": "Inline build time environment variables into function code",
-  "homepage": "https://github.com/bencao/netlify-plugin-inline-functions-env",
-  "bugs": "https://github.com/bencao/netlify-plugin-inline-functions-env/issues",
+  "name": "netlify-plugin-inline-env",
+  "version": "1.0.0",
+  "description": "Inline build time environment variables into Netlify code (such as Netlify Functions)",
+  "homepage": "https://github.com/tysonmatanich/netlify-plugin-inline-env",
+  "bugs": "https://github.com/tysonmatanich/netlify-plugin-inline-env/issues",
   "main": "index.js",
   "files": [
     "index.js",
-    "lib.js",
     "manifest.yml",
     "README.md"
   ],
   "scripts": {
-    "format": "prettier index.js",
+    "format": "prettier --write index.js ./test/**/*.js",
     "test": "ava"
   },
-  "author": "Ben Cao",
+  "author": "tysonmatanich",
   "license": "MIT",
   "dependencies": {
     "@babel/core": "^7.12.0",
-    "babel-plugin-transform-inline-environment-variables": "^0.4.3"
+    "@tysonmatanich/babel-plugin-transform-inline-environment-variables": "^0.1.1"
   },
   "devDependencies": {
     "ava": "^3.13.0",
+    "prettier": "^3.4.2",
     "sinon": "^9.2.0",
     "uuid": "^8.3.1"
   }

@@ -1,93 +1,159 @@
-const fs = require('fs')
-const util = require('util')
-const babel = require('@babel/core')
-const inlinePlugin = require('babel-plugin-transform-inline-environment-variables')
-const { normalizeInputValue, isJsFunction, getSrcFile, uniq } = require('./lib')
-const writeFile = util.promisify(fs.writeFile)
+const path = require("path");
+const fs = require("fs");
+const util = require("util");
+const babel = require("@babel/core");
+const inlineEnvironmentVariablesPlugin = require("@tysonmatanich/babel-plugin-transform-inline-environment-variables");
+const writeFile = util.promisify(fs.writeFile);
 
-async function inlineEnv(path, options = {}, verbose = false) {
-  console.log('inlining', path)
+const normalizeInputValue = (singleOrArrayValue) => {
+  if (!singleOrArrayValue || Array.isArray(singleOrArrayValue)) {
+    return singleOrArrayValue;
+  }
+  return [singleOrArrayValue];
+};
 
-  const transformed = await babel.transformFileAsync(path, {
+const inlineEnvironmentVariables = async (
+  file,
+  include_vars,
+  exclude_vars,
+  verbose = false
+) => {
+  console.log("Processing:", verbose ? file.resolvedPath : file.path);
+
+  // Perform the replacements
+  const transformed = await babel.transformFileAsync(file.resolvedPath, {
     configFile: false,
-    plugins: [babel.createConfigItem([inlinePlugin, options])],
+    plugins: [
+      babel.createConfigItem([
+        inlineEnvironmentVariablesPlugin,
+        { include: include_vars, exclude: exclude_vars },
+      ]),
+    ],
     retainLines: true,
-  })
+  });
 
-  if (verbose) {
-    console.log('transformed code', transformed.code)
+  // Get the replacements data from the metadata
+  const replacements = transformed.metadata.keysReplaced;
+
+  if (replacements.length > 0) {
+    if (verbose) {
+      console.group("Transformed code:");
+      console.log(transformed.code);
+      console.groupEnd();
+    }
+
+    // Save the file since replacements were performed
+    await writeFile(file.resolvedPath, transformed.code, "utf8");
   }
 
-  await writeFile(path, transformed.code, 'utf8')
-}
+  return replacements;
+};
 
-async function processFiles({ inputs, utils }) {
-  const verbose = !!inputs.verbose
+const processFiles = async ({ inputs, utils }) => {
+  const verbose = !!inputs.verbose;
+
+  const include_files = normalizeInputValue(inputs.include_files);
+
+  if (!include_files.length) {
+    utils.status.show({
+      summary: "Skipped processing files because include_files was empty.",
+    });
+    return;
+  }
 
   if (verbose) {
     console.log(
-      'build env contains the following environment variables',
+      "Build environment contains the following environment variables:",
       Object.keys(process.env)
-    )
+    );
   }
 
-  let netlifyFunctions = []
-
-  try {
-    netlifyFunctions = await utils.functions.listAll()
-  } catch (functionMissingErr) {
-    console.log(functionMissingErr) // functions can be there but there is an error when executing
-    return utils.build.failBuild(
-      'Failed to inline function files because netlify function folder was not configured or pointed to a wrong folder, please check your configuration'
+  // Resolve paths
+  const files = Array.from(
+    new Set(
+      include_files.map((filePath) => {
+        const resolvedPath = path.resolve(process.cwd(), filePath);
+        if (!fs.existsSync(resolvedPath)) {
+          utils.build.failBuild(`File not found: ${resolvedPath}`);
+        }
+        return { path: filePath, resolvedPath };
+      })
     )
-  }
+  );
 
-  const files = uniq(netlifyFunctions.filter(isJsFunction).map(getSrcFile))
+  if (files.length > 0) {
+    let processedFiles = [];
 
-  if (files.length !== 0) {
     try {
       if (verbose) {
-        console.log('found function files', files)
+        console.log(
+          "Attempting to process files:",
+          files.map((file) => file.resolvedPath)
+        );
       }
 
-      const include = normalizeInputValue(inputs.include)
-      const exclude = normalizeInputValue(inputs.exclude)
+      const include_vars = normalizeInputValue(inputs.include_vars);
+      const exclude_vars = normalizeInputValue(inputs.exclude_vars);
 
       if (verbose) {
-        console.log('flags.include=', include)
-        console.log('flags.exclude=', exclude)
+        console.log("include_vars:", include_vars);
+        console.log("exclude_vars:", exclude_vars);
       }
 
+      // Process the files
       await Promise.all(
-        files.map((f) => inlineEnv(f, { include, exclude }, verbose))
-      )
+        files.map(async (file) => {
+          const replacements = await inlineEnvironmentVariables(
+            file,
+            include_vars,
+            exclude_vars,
+            verbose
+          );
+          if (replacements.length > 0) {
+            // File had replacements performed
+            processedFiles.push({
+              file,
+              replacements,
+            });
+          }
+        })
+      );
+
+      // Summarize processed files
+      const processedSummary = processedFiles
+        .map(
+          (fileInfo) =>
+            `Replaced: [ ${fileInfo.replacements.join(", ")} ], File: ${
+              verbose ? fileInfo.file.resolvedPath : fileInfo.file.path
+            },`
+        )
+        .join("\n");
 
       utils.status.show({
-        summary: `Processed ${files.length} function file(s).`,
-      })
+        summary: `Processed ${processedFiles.length} file${
+          processedFiles.length === 1 ? "" : "s"
+        }:\n${processedSummary}`,
+      });
     } catch (err) {
       return utils.build.failBuild(
-        `Failed to inline function files due to the following error:\n${err.message}`,
+        `Failed to process files due to the following error:\n${err.message}`,
         { error: err }
-      )
+      );
     }
   } else {
     utils.status.show({
-      summary: 'Skipped processing because the project had no functions.',
-    })
+      summary:
+        "No environment variables were found in the files to be replaced.",
+    });
   }
-}
+};
 
 const handler = (inputs) => {
-  // Use user configured buildEvent
-  const buildEvent = inputs.buildEvent || 'onPreBuild'
-
   return {
-    [buildEvent]: processFiles,
-  }
-}
+    [inputs.buildEvent || "onPreBuild"]: processFiles,
+  };
+};
 
-// expose for testing
-handler.processFiles = processFiles
+handler.processFiles = processFiles;
 
-module.exports = handler
+module.exports = handler;
