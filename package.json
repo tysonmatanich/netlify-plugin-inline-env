@@ -11,7 +11,7 @@
     "README.md"
   ],
   "scripts": {
-    "format": "prettier index.js",
+    "format": "prettier --write index.js ./test/**/*.js",
     "test": "ava"
   },
   "author": "tysonmatanich",
@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "ava": "^3.13.0",
+    "prettier": "^3.4.2",
     "sinon": "^9.2.0",
     "uuid": "^8.3.1"
   }
