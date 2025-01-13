@@ -1,14 +1,14 @@
-# netlify-plugin-inline-functions-env
+# netlify-plugin-inline-env
 
-[![npm version](https://badge.fury.io/js/netlify-plugin-inline-functions-env.svg)](https://badge.fury.io/js/netlify-plugin-inline-functions-env)
+<!-- [![npm version](https://badge.fury.io/js/netlify-plugin-inline-env.svg)](https://badge.fury.io/js/netlify-plugin-inline-env) -->
 
-[![test status](https://github.com/bencao/netlify-plugin-inline-functions-env/workflows/UnitTest/badge.svg)](https://github.com/bencao/netlify-plugin-inline-functions-env/actions)
+<!-- [![test status](https://github.com/tysonmatanich/netlify-plugin-inline-env/workflows/UnitTest/badge.svg)](https://github.com/tysonmatanich/netlify-plugin-inline-env/actions) -->
 
-Inline build time environment variable values into netlify function code so that it becomes available at runtime.
+Inline build time environment variable values into Netlify code (such as Netlify Functions) so that it becomes available at runtime.
 
 ## Why
 
-When we talk about environment variable values for a netlify function, it is important to understand that there're two possible contexts.
+When we talk about environment variable values for a Netlify Function, it is important to understand that there're two possible contexts:
 
 **Build time**
 
@@ -21,7 +21,7 @@ This is when netlify builds your site. The following environment variables would
 
 **Runtime**
 
-This is when your function code is evaluated when a request was received. The following environment variables would be available at runtime:
+This is when your Function code is evaluated when a request was received. The following environment variables would be available at runtime:
 
 - Environment Variables you set at Netlify UI
 
@@ -33,7 +33,7 @@ That is a common source of confusion for many people, see those discussions over
 
 This plugin was built to mitigate this issue by inlining the build time environment variable values as part of your code, so that you can consider build time environment variables magically become available for runtime!
 
-With the original function source file
+With the original Function source file
 
 ```
 function handler(event, context) {
@@ -48,7 +48,7 @@ function handler(event, context) {
 module.exports = { handler };
 ```
 
-The plugin will produce the inlined function source file
+The plugin will produce the inlined Function source file
 
 ```
 function handler(event, context) {
@@ -65,7 +65,7 @@ module.exports = { handler };
 
 **Caveats**
 
-The plugin wouldn't replace more dynamic code like the following ones
+The plugin wouldn't replace more dynamic code like the following ones:
 
 ```
 console.log(process.env);          <-------- no concrete values, won't be replaced with an object
@@ -83,19 +83,19 @@ So you may have to intentionlly convert the above code into something like `proc
 
 ## Install
 
-You can install this plugin in the Netlify UI from this [direct in-app installation link](https://app.netlify.com/plugins/netlify-plugin-inline-functions-env/install) or from the [Plugins directory](https://app.netlify.com/plugins).
+<!-- You can install this plugin in the Netlify UI from this [direct in-app installation link](https://app.netlify.com/plugins/netlify-plugin-inline-env/install) or from the [Plugins directory](https://app.netlify.com/plugins). -->
 
 For file-based installation, add the following lines to your `netlify.toml` file:
 
 ```toml
 [[plugins]]
-package = "netlify-plugin-inline-functions-env"
+package = "netlify-plugin-inline-env"
 ```
 
 To complete file-based installation, from your project's base directory, use npm, yarn, or any other Node.js package manager to add the plugin to `devDependencies` in `package.json`.
 
 ```bash
-npm install -D netlify-plugin-inline-functions-env
+npm install -D netlify-plugin-inline-env
 ```
 
 ## More Options
@@ -106,7 +106,7 @@ You can turn on verbose for debugging purpose by providing plugin inputs.
 
 ```toml
 [[plugins]]
-package = "netlify-plugin-inline-functions-env"
+package = "netlify-plugin-inline-env"
   [plugins.inputs]
   verbose = "true"
 ```
@@ -119,7 +119,7 @@ If you are using TypeScript, or processing your code in other ways you may want 
 
 ```toml
 [[plugins]]
-package = "netlify-plugin-inline-functions-env"
+package = "netlify-plugin-inline-env"
   [plugins.inputs]
   buildEvent = "onBuild"
 ```
@@ -133,14 +133,14 @@ If you are using libraries such as [dotenv-defaults](https://github.com/mrsteele
 
 ```toml
 [[plugins]]
-package = "netlify-plugin-inline-functions-env"
+package = "netlify-plugin-inline-env"
   [plugins.inputs]
   exclude = ["DO_NOT_TRANSFORM_ME", "DO_NOT_TRANSFORM_ME_2"]
 ```
 
 ```toml
 [[plugins]]
-package = "netlify-plugin-inline-functions-env"
+package = "netlify-plugin-inline-env"
   [plugins.inputs]
   include = ["ONLY_TRANSFORM_ME", "ONLY_TRANSFORM_ME_2"]
 ```
@@ -149,6 +149,4 @@ package = "netlify-plugin-inline-functions-env"
 
 1. The `[[plugins]]` line is required for each plugin, even if you have other plugins in your `netlify.toml` file already.
 
-2. This plugin only replaces variables in the functions directory. Files outside the directory won't be modified.
-
-3. If you want to lock to a specific version(or a version that hasn't been accepted by netlify build system yet), please add `netlify-plugin-inline-functions-env` to your dev dependencies by `yarn install --dev netlify-plugin-inline-functions-env` or `npm install --save-dev netlify-plugin-inline-functions-env`.
+2. If you want to lock to a specific version (or a version that hasn't been accepted by netlify build system yet), please add `netlify-plugin-inline-env` to your dev dependencies by `yarn install --dev netlify-plugin-inline-env` or `npm install --save-dev netlify-plugin-inline-env`.
