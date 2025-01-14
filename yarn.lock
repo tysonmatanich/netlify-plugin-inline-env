@@ -280,10 +280,10 @@
   resolved "https://registry.yarnpkg.com/@types/normalize-package-data/-/normalize-package-data-2.4.0.tgz#e486d0d97396d79beedd0a6e33f4534ff6b4973e"
   integrity sha512-f5j5b/Gf71L+dbqxIpQ4Z2WlmI/mPJ0fOkGGmFgtb6sAu97EPczzbS3/tJKxmcYDj55OX6ssqwDAWOHIYDRDGA==
 
-"@tysonmatanich/babel-plugin-transform-inline-environment-variables@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@tysonmatanich/babel-plugin-transform-inline-environment-variables/-/babel-plugin-transform-inline-environment-variables-0.1.1.tgz#e71e7f0ea8a641a873c459ab6c2bb30f8674bfa5"
-  integrity sha512-x9jxMjuYyN1dbAgFH5reWvNBnorg+uhUPkeMJFLbp4rkQ7r/0RHRj9e/0bl0pwPdSe9+jHERvE9O6TZXMWgvCQ==
+"@tysonmatanich/babel-plugin-transform-inline-environment-variables@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@tysonmatanich/babel-plugin-transform-inline-environment-variables/-/babel-plugin-transform-inline-environment-variables-1.0.0.tgz#0c2cd5e55df52a84bbfd4f7269961fe50be7cb40"
+  integrity sha512-Y6P2DK4Lc205JTW6JN485j2w6HHUD4V2BvPOwMwbbPc8TsgHkAhqil7EYQ+Cze1vQuiXCSxxdCmcrqIx2x/gOQ==
 
 acorn-walk@^8.0.0:
   version "8.0.0"

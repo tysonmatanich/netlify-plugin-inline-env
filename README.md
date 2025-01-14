@@ -1,8 +1,6 @@
 # netlify-plugin-inline-env
 
-<!-- [![npm version](https://badge.fury.io/js/netlify-plugin-inline-env.svg)](https://badge.fury.io/js/netlify-plugin-inline-env) -->
-
-<!-- [![test status](https://github.com/tysonmatanich/netlify-plugin-inline-env/workflows/UnitTest/badge.svg)](https://github.com/tysonmatanich/netlify-plugin-inline-env/actions) -->
+[![npm version](https://badge.fury.io/js/netlify-plugin-inline-env.svg)](https://badge.fury.io/js/netlify-plugin-inline-env) [![UnitTest](https://github.com/tysonmatanich/netlify-plugin-inline-env/actions/workflows/unit-test.yml/badge.svg)](https://github.com/tysonmatanich/netlify-plugin-inline-env/actions/workflows/unit-test.yml)
 
 Inline build time environment variable values into Netlify code (such as Netlify Functions) so that it becomes available at runtime.
 

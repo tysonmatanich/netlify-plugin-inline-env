@@ -1,6 +1,6 @@
 {
   "name": "netlify-plugin-inline-env",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Inline build time environment variables into Netlify code (such as Netlify Functions)",
   "homepage": "https://github.com/tysonmatanich/netlify-plugin-inline-env",
   "bugs": "https://github.com/tysonmatanich/netlify-plugin-inline-env/issues",
@@ -16,9 +16,13 @@
   },
   "author": "tysonmatanich",
   "license": "MIT",
+  "keywords": [
+    "netlify",
+    "netlify-plugin"
+  ],
   "dependencies": {
     "@babel/core": "^7.12.0",
-    "@tysonmatanich/babel-plugin-transform-inline-environment-variables": "^0.1.1"
+    "@tysonmatanich/babel-plugin-transform-inline-environment-variables": "^1.0.0"
   },
   "devDependencies": {
     "ava": "^3.13.0",
