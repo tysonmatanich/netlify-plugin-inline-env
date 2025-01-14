@@ -1,6 +1,7 @@
 name: 'UnitTest'
 on:
-  - pull_request
+  pull_request:
+  workflow_dispatch:
 jobs:
   test:
     runs-on: ubuntu-16.04
