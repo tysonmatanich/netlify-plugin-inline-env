@@ -119,20 +119,35 @@ const processFiles = async ({ inputs, utils }) => {
         })
       );
 
-      // Summarize processed files
-      const processedSummary = processedFiles
-        .map(
-          (fileInfo) =>
-            `Replaced: [ ${fileInfo.replacements.join(", ")} ], File: ${
-              verbose ? fileInfo.file.resolvedPath : fileInfo.file.path
-            },`
-        )
-        .join("\n");
+      const uniqueReplacements = [
+        ...new Set(processedFiles.flatMap((fileInfo) => fileInfo.replacements)),
+      ];
 
+      const singularPluralString = (items, singular, plural) => {
+        return items.length === 1 ? singular : plural;
+      };
+
+      // Summarize processed files
       utils.status.show({
-        summary: `Processed ${processedFiles.length} file${
-          processedFiles.length === 1 ? "" : "s"
-        }:\n${processedSummary}`,
+        summary: `Plugin processed \`${
+          processedFiles.length
+        }\` ${singularPluralString(processedFiles, "file", "files")} with \`${
+          uniqueReplacements.length
+        }\` environment ${singularPluralString(
+          uniqueReplacements,
+          "variable",
+          "variables"
+        )}:`,
+        text: processedFiles
+          .map(
+            (fileInfo) =>
+              `- ${
+                verbose ? fileInfo.file.resolvedPath : fileInfo.file.path
+              }\n${fileInfo.replacements
+                .map((replacement) => `  - ${replacement}\n`)
+                .join("")}`
+          )
+          .join(""),
       });
     } catch (err) {
       return utils.build.failBuild(
