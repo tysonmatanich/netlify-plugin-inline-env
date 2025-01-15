@@ -1,6 +1,6 @@
 {
   "name": "netlify-plugin-inline-env",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Inline build time environment variables into Netlify code (such as Netlify Functions)",
   "homepage": "https://github.com/tysonmatanich/netlify-plugin-inline-env",
   "bugs": "https://github.com/tysonmatanich/netlify-plugin-inline-env/issues",
